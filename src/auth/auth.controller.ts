@@ -3,7 +3,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
-import { Controller, Post, Request, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from './auth.service';
 
@@ -24,6 +24,16 @@ export class AuthController {
             userId:request.user.id,
             token:this.authService.getTokenForUser(request.user)
         }
+
+    }
+
+@Get('profile')
+@UseGuards(AuthGuard('jwt'))
+
+    async getProfile(@Request() request){
+        console.log("from pro");
+        
+        return request.user
 
     }
 
