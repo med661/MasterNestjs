@@ -1,40 +1,31 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { User } from "./user.entity";
-import { Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './user.entity';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
-    constructor(
+  constructor(private readonly authService: AuthService) {}
 
-        private readonly authService: AuthService,
-    ){
-        
-    }
+  @Post('login')
+  @UseGuards(AuthGuard('local'))
+  async login(@CurrentUser() user: User) {
+    return {
+      userId: user.id,
+      token: this.authService.getTokenForUser(user),
+    };
+  }
 
-    @Post('login')
-    @UseGuards(AuthGuard('local'))
-    async login(@Request() request) {
-        
-        return{
-            userId:request.user.id,
-            token:this.authService.getTokenForUser(request.user)
-        }
+  @Get('profile')
+  @UseGuards(AuthGuard('jwt'))
+  async getProfile(@CurrentUser() user: User) {
+    console.log('from pro');
 
-    }
-
-@Get('profile')
-@UseGuards(AuthGuard('jwt'))
-
-    async getProfile(@Request() request){
-        console.log("from pro");
-        
-        return request.user
-
-    }
-
+    return user;
+  }
 }

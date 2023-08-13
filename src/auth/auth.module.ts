@@ -7,6 +7,7 @@ import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
 import { AuthService } from "./auth.service";
 import { JwStrategyt } from "./jwt.strategy";
+import { UsersController } from "./users.controller";
 
   @Module({
     imports:[TypeOrmModule.forFeature([User]),
@@ -23,7 +24,7 @@ import { JwStrategyt } from "./jwt.strategy";
   
   ],
     providers:[LocalStrategy,JwStrategyt,AuthService],
-    controllers:[AuthController]
+    controllers:[AuthController,UsersController]
   })
 
 
