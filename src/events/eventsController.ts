@@ -15,7 +15,10 @@ import {
   NotFoundException,
   Query,
   UsePipes,
-  ForbiddenException
+  ForbiddenException,
+  SerializeOptions,
+  UseInterceptors,
+  ClassSerializerInterceptor
 } from '@nestjs/common';
 import { CreateEventDto } from './input/create-event.dto';
 import { Event } from './event.entity';
@@ -31,6 +34,7 @@ import { CurrentUser } from 'src/auth/current-user.decorator';
 import { User } from 'src/auth/user.entity';
 
 @Controller('/events')
+@SerializeOptions({strategy:'excludeAll'})
 export class EventsController {
   private readonly logger = new Logger(EventsController.name);
   constructor(
@@ -39,22 +43,20 @@ export class EventsController {
 
 
   @Get()
-  @UsePipes(new ValidationPipe({transform:true}))
-  async findAll(@Query() filter:ListEvents) {
-
-    this.logger.log(`hit the findAll route`);
-    console.log({filter});
-    
-    const events= await this.eventsService.getEventsWithAttendeeCountFilterdPaginated(filter,{
-      total:true,
-      currentPage:filter.page,
-      limit:10
-    });
-   this.logger.debug(`found ${events.data.length} events`);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findAll(@Query() filter: ListEvents) {
+    const events = await this.eventsService
+      .getEventsWithAttendeeCountFilterdPaginated(
+        filter,
+        {
+          total: true,
+          currentPage: filter.page,
+          limit: 2
+        }
+      );
     return events;
-
   }
-
   
  /* @Get("/practicee")
   async practice2() {
@@ -86,6 +88,7 @@ export class EventsController {
 
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOne(@Param('id', ParseIntPipe) id) {
 
     const event= await this.eventsService.getEvent(id)
@@ -141,6 +144,8 @@ export class EventsController {
 
   @Post()
   @UseGuards(AuthGuardJwt)
+  @UseInterceptors(ClassSerializerInterceptor)
+
   async create(
     @Body() input: CreateEventDto,
     @CurrentUser() user: User
