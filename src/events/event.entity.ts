@@ -1,63 +1,50 @@
 /* eslint-disable prettier/prettier */
-import {Entity,Column,PrimaryGeneratedColumn, OneToMany, ManyToOne} from 'typeorm'
-import { Attendee } from './attendee.entity';
-import { User } from 'src/auth/user.entity';
-import { Expose } from 'class-transformer';
+import { Expose } from "class-transformer";
+import { User } from "src/auth/user.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Attendee } from "./attendee.entity";
+
 @Entity()
-export class Event{
-    @PrimaryGeneratedColumn() 
-    @Expose()
-    id:number;
-    @Column()
-    @Expose()
+export class Event {
+  @PrimaryGeneratedColumn()
+  @Expose()
+  id: number;
 
-    name:string;
-    @Column()
-    @Expose()
+  @Column()
+  @Expose()
+  name: string;
 
-    description:string;
-    @Column()
-    @Expose()
+  @Column()
+  @Expose()
+  description: string;
 
-    when:Date;
-    @Column()
-    @Expose()
+  @Column()
+  @Expose()
+  when: Date;
 
-    address:string;
-    @OneToMany(() => Attendee, (attendee) => attendee.event,{
-        cascade:true
-    })
-    @Expose()
+  @Column()
+  @Expose()
+  address: string;
 
-    attendees: Attendee[];
-    
+  @OneToMany(() => Attendee, (attendee) => attendee.event, {
+    cascade: true
+  })
+  @Expose()
+  attendees: Attendee[];
 
-    @ManyToOne(() => User, (user) => user.organized)
-    @Expose()
+  @ManyToOne(() => User, (user) => user.organized)
+  @Expose()
+  organizer: User;
 
-    organizer: User;
-  
-    @Column({ nullable: true })
+  @Column({ nullable: true })
+  organizerId: number;
 
-    organizerId: number;
-  
-    @Expose()
-
-    attendeeCount?:number; 
-    @Expose()
-
-    attendeeRejected?:number;
-    @Expose()
-    
-    attendeeMaybe?:number;
-    @Expose()
-
-    attendeeAccepted?:number;
-
-
-    
-
-
-    
-    
+  @Expose()
+  attendeeCount?: number;
+  @Expose()
+  attendeeRejected?: number;
+  @Expose()
+  attendeeMaybe?: number;
+  @Expose()
+  attendeeAccepted?: number;
 }

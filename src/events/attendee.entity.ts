@@ -1,35 +1,34 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import { Event } from "./event.entity";
-import { Expose } from 'class-transformer';
+import { Expose } from "class-transformer";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Event } from './event.entity';
 
 export enum AttendeeAnswerEnum {
-    Accepted=1,
-    Maybe,
-    Rejected,
+  Accepted = 1,
+  Maybe,
+  Rejected
 }
+
 @Entity()
-export class Attendee{
-    @PrimaryGeneratedColumn()
-    @Expose()
+export class Attendee {
+  @PrimaryGeneratedColumn()
+  @Expose()
+  id: number;
 
-    id: number;
-    @Column()
-    @Expose()
+  @Column()
+  @Expose()
+  name: string;
 
-    name: string;
-    @ManyToOne(() => Event, (event) => event.attendees, {
-        nullable: false
-    })
-    @JoinColumn()
-    event: Event;
+  @ManyToOne(() => Event, (event) => event.attendees, {
+    nullable: true
+  })
+  @JoinColumn()
+  event: Event;
 
-    @Column('enum',{
-        enum:AttendeeAnswerEnum,
-        default:AttendeeAnswerEnum.Accepted
-    } )
-    @Expose()
-
-    answer:AttendeeAnswerEnum;
-
+  @Column('enum', {
+    enum: AttendeeAnswerEnum,
+    default: AttendeeAnswerEnum.Accepted
+  })
+  @Expose()
+  answer: AttendeeAnswerEnum;
 }
